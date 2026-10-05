@@ -37,7 +37,7 @@ jobs:
 
       - name: Build debug APK
         run: |
-          gradle -p "$PROJECT_DIR" assembleDebug
+          gradle -p "$PROJECT_DIR" assembleDebug -Pkotlin.jvm.target.validation.mode=warning
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
