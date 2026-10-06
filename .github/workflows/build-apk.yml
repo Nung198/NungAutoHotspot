@@ -4,8 +4,7 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - "*.zip"
-      - ".github/workflows/build-apk.yml"
+      - "NungAutoHotspot_final_v0.3.0.zip"
 
 jobs:
   build:
@@ -24,7 +23,7 @@ jobs:
       - name: Extract Android project
         run: |
           mkdir -p project
-          unzip -o *.zip -d project
+          unzip -o NungAutoHotspot_final_v0.3.0.zip -d project
 
       - name: Find project directory
         run: |
@@ -37,7 +36,7 @@ jobs:
 
       - name: Build debug APK
         run: |
-          gradle -p "$PROJECT_DIR" assembleDebug -Pkotlin.jvm.target.validation.mode=warning
+          gradle -p "$PROJECT_DIR" assembleDebug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
