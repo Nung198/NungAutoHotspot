@@ -1,0 +1,49 @@
+name: Build Nung Auto Hotspot APK
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "NungAutoHotspot_final_v0.4.1_SAFE.zip"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Extract Android project
+        run: |
+          mkdir -p project
+          unzip -o NungAutoHotspot_final_v0.4.1_SAFE.zip -d project
+
+      - name: Find project directory
+        run: |
+          PROJECT_DIR=$(dirname "$(find project -name settings.gradle.kts -print -quit)")
+          if [ -z "$PROJECT_DIR" ]; then
+            echo "ERROR: settings.gradle.kts not found"
+            exit 1
+          fi
+          echo "PROJECT_DIR=$PROJECT_DIR" >> "$GITHUB_ENV"
+          echo "Found project at: $PROJECT_DIR"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v5
+
+      - name: Build debug APK
+        run: |
+          gradle -p "$PROJECT_DIR" assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: NungAutoHotspot-debug-v0.4.1
+          path: "${{ env.PROJECT_DIR }}/app/build/outputs/apk/debug/*.apk"
